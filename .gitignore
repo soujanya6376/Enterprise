@@ -1,0 +1,20 @@
+# Node / Nest
+backend/node_modules/
+backend/dist/
+backend/coverage/
+backend/uploads/
+**/.env
+
+# Flutter
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/build/
+frontend/.packages
+frontend/pubspec.lock
+**/*.g.dart
+**/*.freezed.dart
+
+# Misc
+.DS_Store
+*.log

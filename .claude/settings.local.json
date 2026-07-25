@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(docker --version)",
+      "Bash(npm --version)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "PowerShell(docker compose version)",
+      "PowerShell(Start-Process \"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\")",
+      "PowerShell(docker exec billingapp-api-1 ls /app/dist 2>&1)",
+      "PowerShell(docker exec billingapp-api-1 ls /app 2>&1)",
+      "PowerShell(docker run --rm billingapp-api ls /app/dist 2>&1)",
+      "PowerShell(docker run --rm billingapp-api ls /app/dist/src 2>&1)",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3000/api/v1\" -UseBasicParsing 2>&1)",
+      "PowerShell(docker cp \"C:\\\\Users\\\\sakth\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-sakth-Apps-Billing-App\\\\95d5161d-13a0-414e-8f54-aacb4c13448e\\\\scratchpad\\\\seed.js\" billingapp-api-1:/app/seed.js)",
+      "PowerShell(docker exec billingapp-api-1 node /app/seed.js)",
+      "PowerShell(flutter --version 2>&1)",
+      "PowerShell(cd \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\frontend\"; Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\frontend\"; flutter run -d chrome --web-port 8080 2>&1 | Tee-Object -FilePath C:\\\\Users\\\\sakth\\\\AppData\\\\Local\\\\Temp\\\\flutter_run.log')"
+    ]
+  }
+}
