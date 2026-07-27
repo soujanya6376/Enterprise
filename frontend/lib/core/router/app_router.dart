@@ -6,6 +6,9 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/admin/presentation/admin_shell.dart';
 import '../../features/billing/presentation/billing_screen.dart';
 import '../../features/orders/presentation/order_history_screen.dart';
+import '../../features/themes/presentation/appearance_settings_page.dart';
+import '../../features/themes/presentation/theme_editor_page.dart';
+import '../../features/themes/presentation/themes_list_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -23,6 +26,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/admin', builder: (_, __) => const AdminShell()),
+      GoRoute(path: '/admin/appearance', builder: (_, __) => const AppearanceSettingsPage()),
+      GoRoute(path: '/admin/appearance/themes', builder: (_, __) => const ThemesListPage()),
+      GoRoute(
+        path: '/admin/appearance/themes/:id',
+        builder: (_, state) => ThemeEditorPage(themeId: state.pathParameters['id']!),
+      ),
       GoRoute(path: '/billing', builder: (_, __) => const _CashierShell()),
     ],
   );

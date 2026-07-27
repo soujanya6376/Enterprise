@@ -17,7 +17,24 @@
       "PowerShell(docker cp \"C:\\\\Users\\\\sakth\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-sakth-Apps-Billing-App\\\\95d5161d-13a0-414e-8f54-aacb4c13448e\\\\scratchpad\\\\seed.js\" billingapp-api-1:/app/seed.js)",
       "PowerShell(docker exec billingapp-api-1 node /app/seed.js)",
       "PowerShell(flutter --version 2>&1)",
-      "PowerShell(cd \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\frontend\"; Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\frontend\"; flutter run -d chrome --web-port 8080 2>&1 | Tee-Object -FilePath C:\\\\Users\\\\sakth\\\\AppData\\\\Local\\\\Temp\\\\flutter_run.log')"
+      "PowerShell(cd \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\frontend\"; Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\frontend\"; flutter run -d chrome --web-port 8080 2>&1 | Tee-Object -FilePath C:\\\\Users\\\\sakth\\\\AppData\\\\Local\\\\Temp\\\\flutter_run.log')",
+      "WebFetch(domain:claude.ai)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "Bash(python -c \"import sys,json; t=json.load\\(sys.stdin\\); [print\\(i['path']\\) for i in t.get\\('tree',[]\\) if i['type']=='blob']\")",
+      "WebFetch(domain:github.com)",
+      "PowerShell(Expand-Archive -Path \"C:\\\\Users\\\\sakth\\\\Downloads\\\\theme-feature.zip\" -DestinationPath \"C:\\\\Users\\\\sakth\\\\Downloads\\\\theme-feature\" -Force; Get-ChildItem -Recurse \"C:\\\\Users\\\\sakth\\\\Downloads\\\\theme-feature\" | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\backend\\\\src\\\\themes\\\\dto\")",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\backend\\\\src\\\\themes\\\\entities\")",
+      "PowerShell(docker cp \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\backend\\\\prisma\\\\schema.prisma\" billingapp-api-1:/app/prisma/schema.prisma)",
+      "PowerShell(docker exec billingapp-api-1 sh -c \"npx prisma migrate dev --name add_theming\" 2>&1)",
+      "PowerShell(docker cp \"billingapp-api-1:/app/prisma/migrations\" \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\backend\\\\prisma\\\\\")",
+      "Bash(flutter analyze *)",
+      "Bash(flutter test *)",
+      "Bash(flutter devices *)",
+      "Bash(rm \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\.claude\\\\launch.json\" 2>&1; mkdir -p \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\frontend\\\\.claude\")",
+      "Bash(rm -rf \"C:\\\\Users\\\\sakth\\\\Apps\\\\Billing App\\\\frontend\\\\.claude\")",
+      "Bash(flutter pub *)"
     ]
   }
 }

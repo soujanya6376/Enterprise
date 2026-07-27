@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_mode_toggle.dart';
 
 final _usersProvider = FutureProvider<List<Map>>((ref) async {
   final res = await ref.watch(dioProvider).get('/users', queryParameters: {'limit': 100});
@@ -19,8 +21,9 @@ class UsersScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final users = ref.watch(_usersProvider);
+    final t = context.tokens;
     return Scaffold(
-      appBar: AppBar(title: const Text('Users')),
+      appBar: AppBar(title: const Text('Users'), actions: const [ThemeModeToggle()]),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _createUser(context, ref),
         icon: const Icon(Icons.person_add),
@@ -37,7 +40,7 @@ class UsersScreen extends ConsumerWidget {
                 title: Text(u['username'] as String),
                 subtitle: Text('${u['email']} · ${u['role']['name']}'),
                 trailing: Icon(u['isActive'] == true ? Icons.check_circle : Icons.block,
-                    color: u['isActive'] == true ? Colors.green : Colors.grey),
+                    color: u['isActive'] == true ? t.color.background.success : t.color.content.muted),
               ),
           ],
         ),
@@ -79,6 +82,7 @@ class _UserFormDialogState extends ConsumerState<_UserFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final gap = SizedBox(height: context.tokens.spacing.step(3));
     return AlertDialog(
       title: const Text('Create User'),
       content: Form(
@@ -88,13 +92,13 @@ class _UserFormDialogState extends ConsumerState<_UserFormDialog> {
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             TextFormField(controller: _username, decoration: const InputDecoration(labelText: 'Username'),
                 validator: (v) => (v == null || v.length < 3) ? 'Min 3 chars' : null),
-            const SizedBox(height: 12),
+            gap,
             TextFormField(controller: _email, decoration: const InputDecoration(labelText: 'Email'),
                 validator: (v) => (v == null || !v.contains('@')) ? 'Invalid email' : null),
-            const SizedBox(height: 12),
+            gap,
             TextFormField(controller: _password, obscureText: true, decoration: const InputDecoration(labelText: 'Password'),
                 validator: (v) => (v == null || v.length < 6) ? 'Min 6 chars' : null),
-            const SizedBox(height: 12),
+            gap,
             DropdownButtonFormField<String>(
               initialValue: _role,
               decoration: const InputDecoration(labelText: 'Role'),

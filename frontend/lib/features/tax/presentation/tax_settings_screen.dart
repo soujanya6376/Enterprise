@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_mode_toggle.dart';
 
 final _globalTaxProvider = FutureProvider<double>((ref) async {
   final res = await ref.watch(dioProvider).get('/tax/global');
@@ -33,20 +35,22 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final tax = ref.watch(_globalTaxProvider);
+    final t = context.tokens;
     return Scaffold(
-      appBar: AppBar(title: const Text('Tax Settings')),
+      appBar: AppBar(title: const Text('Tax Settings'), actions: const [ThemeModeToggle()]),
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(t.spacing.lg),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Global Tax', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            const Text('Applied to products without a tax override.'),
-            const SizedBox(height: 16),
+            SizedBox(height: t.spacing.sm),
+            Text('Applied to products without a tax override.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: t.color.content.secondary)),
+            SizedBox(height: t.spacing.md),
             tax.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text('Error: $e'),
+              error: (e, _) => Text('Error: $e', style: TextStyle(color: t.color.content.danger)),
               data: (v) {
                 if (_controller.text.isEmpty) _controller.text = v.toStringAsFixed(2);
                 return TextField(
@@ -56,10 +60,11 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                 );
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: t.spacing.md),
             FilledButton(onPressed: _saving ? null : _save, child: const Text('Save')),
-            const SizedBox(height: 24),
-            const Text('Per-product tax overrides are set on each product (blank = use global).'),
+            SizedBox(height: t.spacing.lg),
+            Text('Per-product tax overrides are set on each product (blank = use global).',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: t.color.content.secondary)),
           ]),
         ),
       ),

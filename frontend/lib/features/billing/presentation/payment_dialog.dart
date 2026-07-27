@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../orders/data/orders_repository.dart';
 
 const _methods = {
@@ -38,20 +39,21 @@ class _PaymentDialogState extends ConsumerState<PaymentDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.tokens;
     return AlertDialog(
       title: Text('Payment — ${widget.order['invoiceNumber']}'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Grand Total: ₹${widget.order['grandTotal']}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          Text('Grand Total: ₹${widget.order['grandTotal']}', style: Theme.of(context).textTheme.titleLarge),
+          SizedBox(height: t.spacing.md),
           DropdownButtonFormField<String>(
             initialValue: _method,
             decoration: const InputDecoration(labelText: 'Payment method'),
             items: _methods.entries.map((e) => DropdownMenuItem(value: e.key, child: Text(e.value))).toList(),
             onChanged: (v) => setState(() => _method = v!),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: t.spacing.step(3)),
           TextField(
             controller: _amount,
             keyboardType: TextInputType.number,

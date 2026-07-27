@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../reports/presentation/dashboard_screen.dart';
 import '../../products/presentation/products_screen.dart';
 import '../../tax/presentation/tax_settings_screen.dart';
 import '../../users/presentation/users_screen.dart';
 import '../../orders/presentation/order_history_screen.dart';
+import '../../themes/presentation/appearance_settings_page.dart';
 
 class AdminShell extends ConsumerStatefulWidget {
   const AdminShell({super.key});
@@ -23,6 +25,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     (icon: Icons.percent, label: 'Tax'),
     (icon: Icons.people, label: 'Users'),
     (icon: Icons.receipt_long, label: 'Orders'),
+    (icon: Icons.palette, label: 'Appearance'),
   ];
 
   Widget get _body => const [
@@ -31,6 +34,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
         TaxSettingsScreen(),
         UsersScreen(),
         OrderHistoryScreen(),
+        AppearanceSettingsPage(),
       ][_index];
 
   Future<void> _logout() async {
@@ -41,6 +45,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
   @override
   Widget build(BuildContext context) {
     final wide = MediaQuery.of(context).size.width > 760;
+    final t = context.tokens;
     if (wide) {
       return Scaffold(
         body: Row(children: [
@@ -49,9 +54,9 @@ class _AdminShellState extends ConsumerState<AdminShell> {
             selectedIndex: _index,
             onDestinationSelected: (i) => setState(() => _index = i),
             leading: Column(children: [
-              const SizedBox(height: 12),
-              const Icon(Icons.point_of_sale, size: 32),
-              const SizedBox(height: 12),
+              SizedBox(height: t.spacing.step(3)),
+              Icon(Icons.point_of_sale, size: 32, color: t.color.background.accent),
+              SizedBox(height: t.spacing.step(3)),
               IconButton(onPressed: _logout, icon: const Icon(Icons.logout), tooltip: 'Logout'),
             ]),
             destinations: _dests
@@ -67,7 +72,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
       body: _body,
       drawer: Drawer(
         child: ListView(children: [
-          const DrawerHeader(child: Center(child: Text('Admin', style: TextStyle(fontSize: 22)))),
+          DrawerHeader(child: Center(child: Text('Admin', style: Theme.of(context).textTheme.headlineSmall))),
           for (var i = 0; i < _dests.length; i++)
             ListTile(
               leading: Icon(_dests[i].icon),

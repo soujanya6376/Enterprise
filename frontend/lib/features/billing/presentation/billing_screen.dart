@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_mode_toggle.dart';
 import '../../products/data/products_repository.dart';
 import '../../orders/data/orders_repository.dart';
 import 'cart_controller.dart';
@@ -48,11 +50,12 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
     final products = ref.watch(productsProvider(_search));
     final cart = ref.watch(cartProvider);
     final wide = MediaQuery.of(context).size.width > 800;
+    final t = context.tokens;
 
     final grid = Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(t.spacing.step(3)),
           child: TextField(
             decoration: const InputDecoration(hintText: 'Search products', prefixIcon: Icon(Icons.search)),
             onChanged: (v) => setState(() => _search = v),
@@ -63,9 +66,13 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(child: Text('Error: $e')),
             data: (items) => GridView.builder(
-              padding: const EdgeInsets.all(12),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 180, childAspectRatio: 0.85, crossAxisSpacing: 12, mainAxisSpacing: 12),
+              padding: EdgeInsets.all(t.spacing.step(3)),
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 180,
+                childAspectRatio: 0.85,
+                crossAxisSpacing: t.spacing.step(3),
+                mainAxisSpacing: t.spacing.step(3),
+              ),
               itemCount: items.where((p) => p.isActive).length,
               itemBuilder: (_, i) {
                 final p = items.where((p) => p.isActive).toList()[i];
@@ -78,15 +85,15 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                         Expanded(
                           child: p.imageUrl != null
                               ? Image.network(p.imageUrl!, fit: BoxFit.cover)
-                              : Container(color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                  child: const Icon(Icons.fastfood, size: 36)),
+                              : Container(color: t.color.background.surface,
+                                  child: Icon(Icons.fastfood, size: 36, color: t.color.content.muted)),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(t.spacing.sm),
                           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontWeight: FontWeight.w600)),
-                            Text('₹${p.price.toStringAsFixed(2)}'),
+                                style: Theme.of(context).textTheme.labelLarge),
+                            Text('₹${p.price.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodySmall),
                           ]),
                         ),
                       ],
@@ -106,6 +113,7 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
       appBar: AppBar(
         title: const Text('Billing'),
         actions: [
+          const ThemeModeToggle(),
           if (!wide)
             Stack(children: [
               IconButton(
@@ -115,14 +123,14 @@ class _BillingScreenState extends ConsumerState<BillingScreen> {
                   builder: (_) => SizedBox(height: MediaQuery.of(context).size.height * 0.8, child: cartPanel)),
               ),
               if (cart.isNotEmpty)
-                Positioned(right: 8, top: 8, child: CircleAvatar(radius: 8, child: Text('${cart.length}', style: const TextStyle(fontSize: 10)))),
+                Positioned(right: 8, top: 8, child: CircleAvatar(radius: 8, child: Text('${cart.length}', style: TextStyle(fontSize: t.typography.caption.size)))),
             ]),
         ],
       ),
       body: wide
           ? Row(children: [
               Expanded(flex: 2, child: grid),
-              SizedBox(width: 340, child: Card(margin: const EdgeInsets.all(8), child: cartPanel)),
+              SizedBox(width: 340, child: Card(margin: EdgeInsets.all(t.spacing.sm), child: cartPanel)),
             ])
           : grid,
     );
@@ -139,10 +147,15 @@ class _CartPanel extends ConsumerWidget {
     final globalTax = ref.watch(globalTaxProvider);
     final subtotal = estimatedSubtotal(cart);
     final tax = estimatedTax(cart, globalTax);
+    final t = context.tokens;
+    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       children: [
-        const Padding(padding: EdgeInsets.all(12), child: Text('Cart', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+        Padding(
+          padding: EdgeInsets.all(t.spacing.step(3)),
+          child: Text('Cart', style: textTheme.titleLarge),
+        ),
         Expanded(
           child: cart.isEmpty
               ? const Center(child: Text('Tap products to add'))
@@ -165,13 +178,13 @@ class _CartPanel extends ConsumerWidget {
         ),
         const Divider(height: 1),
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(t.spacing.step(3)),
           child: Column(children: [
-            _row('Subtotal', subtotal),
-            _row('Tax (est.)', tax),
+            _row(context, 'Subtotal', subtotal),
+            _row(context, 'Tax (est.)', tax),
             const Divider(),
-            _row('Grand Total', subtotal + tax, bold: true),
-            const SizedBox(height: 12),
+            _row(context, 'Grand Total', subtotal + tax, bold: true),
+            SizedBox(height: t.spacing.step(3)),
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
@@ -186,11 +199,15 @@ class _CartPanel extends ConsumerWidget {
     );
   }
 
-  Widget _row(String label, double value, {bool bold = false}) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(label, style: TextStyle(fontWeight: bold ? FontWeight.bold : null)),
-          Text('₹${value.toStringAsFixed(2)}', style: TextStyle(fontWeight: bold ? FontWeight.bold : null)),
-        ]),
-      );
+  Widget _row(BuildContext context, String label, double value, {bool bold = false}) {
+    final textTheme = Theme.of(context).textTheme;
+    final style = bold ? textTheme.titleMedium : textTheme.bodyMedium;
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: context.tokens.spacing.xs / 2),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(label, style: style),
+        Text('₹${value.toStringAsFixed(2)}', style: style),
+      ]),
+    );
+  }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_mode_toggle.dart';
 import '../data/orders_repository.dart';
 
 final _historyProvider = FutureProvider.family<List<Map>, String>((ref, search) {
@@ -22,13 +24,14 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
     final orders = ref.watch(_historyProvider(_search));
     final repo = ref.read(ordersRepositoryProvider);
     final df = DateFormat('dd MMM yyyy, HH:mm');
+    final t = context.tokens;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Order History')),
+      appBar: AppBar(title: const Text('Order History'), actions: const [ThemeModeToggle()]),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(t.spacing.step(3)),
             child: TextField(
               decoration: const InputDecoration(hintText: 'Search invoice number', prefixIcon: Icon(Icons.search)),
               onChanged: (v) => setState(() => _search = v),
@@ -49,7 +52,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                           title: Text(o['invoiceNumber'] as String),
                           subtitle: Text('${df.format(DateTime.parse(o['createdAt']))} · ${o['status']}'),
                           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                            Text('₹${o['grandTotal']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text('₹${o['grandTotal']}', style: Theme.of(context).textTheme.titleMedium),
                             IconButton(
                               icon: const Icon(Icons.print),
                               tooltip: 'Reprint (thermal)',

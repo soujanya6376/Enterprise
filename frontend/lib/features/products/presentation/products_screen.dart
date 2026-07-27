@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_mode_toggle.dart';
 import '../data/product.dart';
 import '../data/products_repository.dart';
 
@@ -23,8 +25,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final products = ref.watch(productsProvider(_search));
+    final t = context.tokens;
     return Scaffold(
-      appBar: AppBar(title: const Text('Products')),
+      appBar: AppBar(title: const Text('Products'), actions: const [ThemeModeToggle()]),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openForm(),
         icon: const Icon(Icons.add),
@@ -33,7 +36,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(t.spacing.step(3)),
             child: TextField(
               decoration: const InputDecoration(hintText: 'Search products', prefixIcon: Icon(Icons.search)),
               onChanged: (v) => setState(() => _search = v),
@@ -128,13 +131,13 @@ class _ProductFormDialogState extends ConsumerState<_ProductFormDialog> {
             children: [
               TextFormField(controller: _name, decoration: const InputDecoration(labelText: 'Name'),
                   validator: (v) => (v == null || v.isEmpty) ? 'Required' : null),
-              const SizedBox(height: 12),
+              SizedBox(height: context.tokens.spacing.step(3)),
               TextFormField(controller: _desc, decoration: const InputDecoration(labelText: 'Description')),
-              const SizedBox(height: 12),
+              SizedBox(height: context.tokens.spacing.step(3)),
               TextFormField(controller: _price, decoration: const InputDecoration(labelText: 'Price'),
                   keyboardType: TextInputType.number,
                   validator: (v) => double.tryParse(v ?? '') == null ? 'Enter a number' : null),
-              const SizedBox(height: 12),
+              SizedBox(height: context.tokens.spacing.step(3)),
               TextFormField(controller: _tax,
                   decoration: const InputDecoration(labelText: 'Tax % (blank = global)'),
                   keyboardType: TextInputType.number),

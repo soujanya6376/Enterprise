@@ -11,6 +11,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { InvoiceModule } from './modules/invoice/invoice.module';
+import { ThemesModule } from './themes/themes.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 
@@ -27,6 +28,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     ReportsModule,
     UploadsModule,
     InvoiceModule,
+    ThemesModule,
   ],
   providers: [
     // Global auth + role guards (use @Public() / @Roles() to control access)

@@ -52,9 +52,11 @@ model User {
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime? // soft delete
 
-  orders     Order[]
-  importLogs ProductImportLog[]
-  auditLogs  AuditLog[]
+  orders            Order[]
+  importLogs        ProductImportLog[]
+  auditLogs         AuditLog[]
+  themesCreated     Theme[]
+  themeAssignments  ThemeAssignment[]
 
   @@index([username])
   @@index([email])
@@ -174,4 +176,46 @@ model AuditLog {
   @@index([actorId])
   @@index([entity])
   @@map("audit_logs")
+}
+
+// ---------------------------------------------------------------------------
+// Theming
+// ---------------------------------------------------------------------------
+
+enum Platform {
+  WEB
+  ANDROID
+  IOS
+}
+
+model Theme {
+  id            String    @id @default(uuid())
+  name          String    @unique
+  description   String?
+  tokens        Json
+  schemaVersion Int       @default(1)
+  revision      Int       @default(1)
+  isActive      Boolean   @default(true)
+  deletedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  createdById   String?
+  createdBy     User?     @relation(fields: [createdById], references: [id])
+
+  assignments ThemeAssignment[]
+
+  @@index([deletedAt])
+  @@map("themes")
+}
+
+model ThemeAssignment {
+  platform    Platform @id
+  themeId     String
+  theme       Theme    @relation(fields: [themeId], references: [id], onDelete: Restrict)
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id])
+
+  @@index([themeId])
+  @@map("theme_assignments")
 }

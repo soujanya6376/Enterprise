@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_mode_toggle.dart';
 import 'auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -33,10 +35,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(authControllerProvider);
+    final t = context.tokens;
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: const [ThemeModeToggle()],
+      ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(t.spacing.lg),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 380),
             child: Form(
@@ -45,16 +54,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(Icons.point_of_sale, size: 56, color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(height: 12),
+                  Icon(Icons.point_of_sale, size: 56, color: t.color.background.accent),
+                  SizedBox(height: t.spacing.sm),
                   Text('POS Billing', textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineSmall),
-                  const SizedBox(height: 32),
+                  SizedBox(height: t.spacing.xl),
                   TextFormField(
                     controller: _username,
                     decoration: const InputDecoration(labelText: 'Username', prefixIcon: Icon(Icons.person)),
                     validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: t.spacing.md),
                   TextFormField(
                     controller: _password,
                     obscureText: true,
@@ -63,10 +72,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onFieldSubmitted: (_) => _submit(),
                   ),
                   if (state.error != null) ...[
-                    const SizedBox(height: 16),
-                    Text(state.error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                    SizedBox(height: t.spacing.md),
+                    Text(state.error!, style: TextStyle(color: t.color.content.danger)),
                   ],
-                  const SizedBox(height: 24),
+                  SizedBox(height: t.spacing.lg),
                   FilledButton(
                     onPressed: state.loading ? null : _submit,
                     child: state.loading

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_mode_toggle.dart';
 
 final _dashboardProvider = FutureProvider<Map>((ref) async {
   final dio = ref.watch(dioProvider);
@@ -25,6 +27,7 @@ class DashboardScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Dashboard'), actions: [
         IconButton(icon: const Icon(Icons.refresh), onPressed: () => ref.invalidate(_dashboardProvider)),
+        const ThemeModeToggle(),
       ]),
       body: data.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -35,27 +38,28 @@ class DashboardScreen extends ConsumerWidget {
           final monthly = s['monthly'] as Map;
           final top = d['top'] as List;
           final recent = d['recent'] as List;
+          final t = context.tokens;
           return ListView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(t.spacing.md),
             children: [
-              Wrap(spacing: 12, runSpacing: 12, children: [
+              Wrap(spacing: t.spacing.step(3), runSpacing: t.spacing.step(3), children: [
                 _card(context, 'Today Orders', '${today['ordersCount']}', Icons.receipt_long),
                 _card(context, 'Today Revenue', '₹${today['revenue']}', Icons.payments),
                 _card(context, 'Today Tax', '₹${today['taxCollected']}', Icons.account_balance),
                 _card(context, 'Month Revenue', '₹${monthly['revenue']}', Icons.trending_up),
                 _card(context, 'Month Tax', '₹${monthly['taxCollected']}', Icons.savings),
               ]),
-              const SizedBox(height: 24),
+              SizedBox(height: t.spacing.lg),
               Text('Top Selling Products', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 8),
+              SizedBox(height: t.spacing.sm),
               ...top.map((p) => ListTile(
                     leading: const Icon(Icons.star_outline),
                     title: Text(p['productName'] as String),
                     trailing: Text('${p['quantitySold']} sold · ₹${p['revenue']}'),
                   )),
-              const SizedBox(height: 24),
+              SizedBox(height: t.spacing.lg),
               Text('Recent Orders', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 8),
+              SizedBox(height: t.spacing.sm),
               ...recent.map((o) => ListTile(
                     leading: const Icon(Icons.history),
                     title: Text(o['invoiceNumber'] as String),
@@ -69,22 +73,25 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _card(BuildContext context, String label, String value, IconData icon) => SizedBox(
-        width: 220,
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(children: [
-              CircleAvatar(child: Icon(icon)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(label, style: Theme.of(context).textTheme.bodySmall),
-                  Text(value, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis),
-                ]),
-              ),
-            ]),
-          ),
+  Widget _card(BuildContext context, String label, String value, IconData icon) {
+    final t = context.tokens;
+    return SizedBox(
+      width: 220,
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(t.spacing.md),
+          child: Row(children: [
+            CircleAvatar(child: Icon(icon)),
+            SizedBox(width: t.spacing.step(3)),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(label, style: Theme.of(context).textTheme.bodySmall),
+                Text(value, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis),
+              ]),
+            ),
+          ]),
         ),
-      );
+      ),
+    );
+  }
 }
